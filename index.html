@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The OC Valet</title>
+<meta name="description" content="Event valet, shuttle, parking, and event services based in South Orange County. Request a free quote.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one narrow column on phones, two columns from 800px. Square corners everywhere, thin gold rules instead of boxes with shadows. */
+:root {
+  color-scheme: dark;
+  --navy-900: #0a1424;
+  --navy-800: #101d33;
+  --navy-700: #1b2c49;
+  --gold: #c9a24b;
+  --gold-light: #e3c781;
+  --ivory: #f4f0e7;
+  --muted: #a8b2c3;
+  --ink: #0a1424;
+  --ink-muted: #46526a;
+  --error: #ff9c8a;
+  --font-display: "Marcellus", "Times New Roman", Georgia, serif;
+  --font-body: "Work Sans", "Helvetica Neue", Arial, sans-serif;
+  --wrap: 1120px;
+}
+
+*, *::before, *::after { box-sizing: border-box; border-radius: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--navy-900);
+  color: var(--ivory);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  padding-bottom: 68px; /* room for the phone action bar */
+}
+img { max-width: 100%; }
+a { color: var(--gold-light); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.1rem, 7vw, 3.6rem); }
+h2 { font-size: clamp(1.6rem, 4.5vw, 2.3rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0; max-width: 62ch; }
+ul { margin: 0; padding: 0; list-style: none; }
+:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
+.eyebrow {
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 14px;
+}
+.lead { font-size: 1.12rem; color: var(--muted); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 52px; padding: 12px 26px;
+  font-family: var(--font-body); font-size: 1rem; font-weight: 600; letter-spacing: 0.04em;
+  text-decoration: none; text-align: center; cursor: pointer;
+  border: 2px solid var(--gold); background: var(--gold); color: var(--ink);
+  transition: background 0.15s, color 0.15s;
+}
+.btn:hover { background: var(--gold-light); border-color: var(--gold-light); }
+.btn.ghost { background: transparent; color: var(--gold-light); }
+.btn.ghost:hover { background: var(--gold); color: var(--ink); }
+.btn.big { min-height: 60px; padding: 14px 34px; font-size: 1.08rem; }
+.btn.dark { background: var(--ink); border-color: var(--ink); color: var(--ivory); }
+.btn.dark:hover { background: var(--navy-700); border-color: var(--navy-700); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Header */
+.site-header { background: var(--navy-900); border-bottom: 1px solid var(--navy-700); }
+.header-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 14px; padding-bottom: 14px; }
+.logo { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ivory); text-decoration: none; white-space: nowrap; }
+.logo span { color: var(--gold); }
+.header-top .btn { min-height: 44px; padding: 8px 16px; font-size: 0.92rem; }
+.site-nav { border-top: 1px solid var(--navy-700); }
+.site-nav ul { display: flex; }
+.site-nav li { flex: 1; }
+.site-nav a {
+  display: block; padding: 12px 4px; text-align: center;
+  font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent;
+}
+.site-nav a:hover { color: var(--ivory); }
+.site-nav a[aria-current="page"] { color: var(--gold-light); border-bottom-color: var(--gold); }
+
+/* Pages */
+.js .page { display: none; }
+.js .page.active { display: block; }
+section { padding: 56px 0; }
+.rule-top { border-top: 1px solid var(--navy-700); }
+.stack { display: grid; gap: 20px; }
+.stack-lg { display: grid; gap: 36px; }
+
+/* Hero */
+.hero { padding: 48px 0 56px; }
+.hero-grid { display: grid; gap: 36px; }
+.hero h1 em { font-style: normal; color: var(--gold-light); }
+.contact-line { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 0.98rem; color: var(--muted); }
+.contact-line a { color: var(--ivory); text-decoration: none; border-bottom: 1px solid var(--gold); }
+
+/* Photo slots: swap each .photo for a real <img> when photos are ready */
+.photo {
+  position: relative; min-height: 240px;
+  background:
+    linear-gradient(160deg, rgba(201,162,75,0.16), rgba(201,162,75,0) 55%),
+    repeating-linear-gradient(135deg, var(--navy-800) 0 14px, #13223b 14px 28px);
+  border: 1px solid var(--navy-700);
+  display: flex; align-items: flex-end;
+}
+.photo::before, .photo::after { content: ""; position: absolute; width: 26px; height: 26px; border: 2px solid var(--gold); }
+.photo::before { top: 12px; left: 12px; border-right: 0; border-bottom: 0; }
+.photo::after { bottom: 12px; right: 12px; border-left: 0; border-top: 0; }
+.photo figcaption, .photo span {
+  margin: 18px; padding: 6px 10px; background: var(--navy-900);
+  font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+figure { margin: 0; }
+.photo.tall { min-height: 320px; }
+
+/* Service rows */
+.service-list { border-top: 1px solid var(--navy-700); }
+.service-list li { border-bottom: 1px solid var(--navy-700); padding: 22px 0; display: grid; gap: 8px; }
+.service-list h3 { color: var(--ivory); }
+.service-list p { color: var(--muted); }
+.service-list.compact li { padding: 16px 0; }
+.service-list.compact h3 { font-size: 1.15rem; }
+
+/* Ivory band */
+.band-ivory { background: var(--ivory); color: var(--ink); }
+.band-ivory .eyebrow { color: #8a6a1f; }
+.band-ivory p { color: var(--ink-muted); }
+.reasons { display: grid; gap: 0; border-top: 2px solid var(--ink); }
+.reasons li { padding: 22px 0; border-bottom: 1px solid #cfc8b8; display: grid; gap: 6px; }
+.reasons h3 { color: var(--ink); }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.tags li { border: 1px solid var(--gold); padding: 8px 14px; font-size: 0.92rem; letter-spacing: 0.04em; color: var(--ivory); }
+.tags.quiet li { border-color: var(--navy-700); color: var(--muted); }
+
+/* CTA band */
+.cta { background: var(--navy-800); border-top: 2px solid var(--gold); border-bottom: 1px solid var(--navy-700); }
+.cta-grid { display: grid; gap: 24px; align-items: center; }
+
+/* Form */
+.quote-grid { display: grid; gap: 40px; }
+form { display: grid; gap: 18px; }
+.field { display: grid; gap: 6px; }
+.field-pair { display: grid; gap: 18px; }
+label, legend { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+legend { padding: 0; margin-bottom: 10px; }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea {
+  width: 100%; min-height: 52px; padding: 12px 14px;
+  font-family: var(--font-body); font-size: 1rem; color: var(--ivory);
+  background: var(--navy-800); border: 1px solid var(--navy-700);
+  -webkit-appearance: none; appearance: none;
+}
+textarea { min-height: 130px; resize: vertical; }
+input:focus, textarea:focus { outline: none; border-color: var(--gold); }
+.checks { display: grid; gap: 10px; }
+.check { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--navy-700); background: var(--navy-800); cursor: pointer; }
+.check span { font-size: 1rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ivory); }
+.check input { width: 22px; height: 22px; margin: 0; flex: none; accent-color: var(--gold); }
+.check:has(input:checked) { border-color: var(--gold); }
+.form-error { color: var(--error); font-size: 0.95rem; min-height: 1.4em; }
+.side { border: 1px solid var(--navy-700); border-top: 2px solid var(--gold); padding: 26px 22px; display: grid; gap: 18px; align-content: start; }
+.side dl { margin: 0; display: grid; gap: 16px; }
+.side dt { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+.side dd { margin: 4px 0 0; font-size: 1.2rem; overflow-wrap: anywhere; }
+.side dd a { color: var(--ivory); text-decoration: none; border-bottom: 1px solid var(--gold); }
+.result { border: 1px solid var(--gold); padding: 24px 20px; display: grid; gap: 16px; }
+.result pre {
+  margin: 0; padding: 16px; background: var(--navy-800); border: 1px solid var(--navy-700);
+  font-family: var(--font-body); font-size: 0.95rem; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+[hidden] { display: none !important; }
+
+/* Footer */
+.site-footer { border-top: 1px solid var(--navy-700); padding: 36px 0; font-size: 0.92rem; color: var(--muted); }
+.footer-grid { display: grid; gap: 18px; }
+.site-footer a { color: var(--ivory); text-decoration: none; }
+.site-footer a:hover { color: var(--gold-light); }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+
+/* Phone action bar */
+.action-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: grid; grid-template-columns: 1fr 1.6fr; background: var(--navy-900); border-top: 1px solid var(--gold); }
+.action-bar .btn { min-height: 60px; border-width: 0; padding: 10px; }
+.action-bar .btn.ghost { color: var(--ivory); }
+
+@media (min-width: 800px) {
+  body { padding-bottom: 0; font-size: 18px; }
+  .action-bar { display: none; }
+  .wrap { padding: 0 32px; }
+  .site-header { position: sticky; top: 0; z-index: 20; }
+  .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+  .header-top { order: 0; flex: none; padding-top: 18px; padding-bottom: 18px; }
+  .header-top .btn { display: none; }
+  .site-nav { border-top: 0; flex: 1; }
+  .site-nav ul { justify-content: flex-end; gap: 6px; }
+  .site-nav li { flex: none; }
+  .site-nav a { padding: 10px 14px; }
+  .header-cta { display: inline-flex !important; min-height: 46px; padding: 8px 20px; font-size: 0.95rem; flex: none; }
+  section { padding: 84px 0; }
+  .hero { padding: 80px 0 88px; }
+  .hero-grid { grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: center; }
+  .photo.tall { min-height: 460px; }
+  .split { grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start; }
+  .reasons { grid-template-columns: 1fr 1fr; column-gap: 56px; }
+  .cta-grid { grid-template-columns: 1fr auto; }
+  .quote-grid { grid-template-columns: 1.6fr 1fr; gap: 64px; align-items: start; }
+  .field-pair { grid-template-columns: 1fr 1fr; }
+  .checks { grid-template-columns: 1fr 1fr; }
+  .service-list.full li { grid-template-columns: 1fr 1.5fr; gap: 40px; padding: 30px 0; }
+  .footer-grid { grid-template-columns: 1fr auto; align-items: center; }
+  .side { position: sticky; top: 100px; }
+}
+.header-cta { display: none; }
+.split { display: grid; gap: 28px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="header-top">
+      <a class="logo" href="#home">The <span>OC</span> Valet</a>
+      <a class="btn" href="#quote">Free Quote</a>
+    </div>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="#home" data-nav="home">Home</a></li>
+        <li><a href="#services" data-nav="services">Services</a></li>
+        <li><a href="#about" data-nav="about">About</a></li>
+        <li><a href="#quote" data-nav="quote">Contact</a></li>
+      </ul>
+    </nav>
+    <a class="btn header-cta" href="#quote">Get a Free Quote</a>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== HOME ===================== -->
+<div class="page active" id="home" data-page="home">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="stack">
+        <div>
+          <p class="eyebrow">South Orange County</p>
+          <h1>Event valet, shuttle, and parking, <em>handled by locals.</em></h1>
+        </div>
+        <p class="lead">The OC Valet runs valet, shuttle, parking, security, and setup for weddings, private parties, corporate events, venues, and restaurants across Orange County.</p>
+        <div class="btn-row">
+          <a class="btn big" href="#quote">Get a Free Quote</a>
+          <a class="btn big ghost" href="tel:+19494908233">Call (949) 490 8233</a>
+        </div>
+        <p class="contact-line">
+          <span>Phone <a href="tel:+19494908233">(949) 490 8233</a></span>
+          <span>Email <a href="mailto:TheOCValet@gmail.com">TheOCValet@gmail.com</a></span>
+        </p>
+      </div>
+      <figure class="photo tall"><figcaption>Photo: valet greeting guests at a venue</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="rule-top">
+    <div class="wrap split">
+      <div class="stack">
+        <div>
+          <p class="eyebrow">What we do</p>
+          <h2>Five services, one local team.</h2>
+        </div>
+        <p class="lead">Book one service or all five. We build the plan around your event.</p>
+        <div><a class="btn ghost" href="#services">See all services</a></div>
+      </div>
+      <ul class="service-list compact">
+        <li><h3>Full Service Valet</h3><p>Professional valet attendants for your guests.</p></li>
+        <li><h3>Full Service Shuttle</h3><p>Guest transport to and from the venue.</p></li>
+        <li><h3>Parking Attendants and Security</h3><p>Lot attendants, traffic direction, and lot security.</p></li>
+        <li><h3>Event Security</h3><p>Security staff on site for your event.</p></li>
+        <li><h3>Event Setup and Breakdown</h3><p>Chairs, staging, and teardown.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="band-ivory">
+    <div class="wrap stack-lg">
+      <div>
+        <p class="eyebrow">Why book us</p>
+        <h2>What makes us different.</h2>
+      </div>
+      <ul class="reasons">
+        <li><h3>Adaptive</h3><p>Every event gets a plan built around what you and your event need. We stay flexible on the day and adjust on the spot.</p></li>
+        <li><h3>All local</h3><p>Our whole team lives in Orange County. We know the venues, the streets, and the area.</p></li>
+        <li><h3>Our values</h3><p>Honesty, customer satisfaction, and safety guide every event we work.</p></li>
+        <li><h3>Our team</h3><p>Personable, relatable, and charismatic. We strive for excellence in everything we do.</p></li>
+      </ul>
+      <div><a class="btn big dark" href="#quote">Get a Free Quote</a></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap split">
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Who we serve</p>
+          <h2>Built for events of every kind.</h2>
+        </div>
+        <ul class="tags">
+          <li>Weddings</li><li>Private parties</li><li>Corporate events</li><li>Venues</li><li>Restaurants</li>
+        </ul>
+      </div>
+      <div class="stack">
+        <div>
+          <p class="eyebrow">Service area</p>
+          <h2>All of Orange County.</h2>
+        </div>
+        <ul class="tags quiet">
+          <li>San Juan Capistrano</li><li>Irvine</li><li>Newport Beach</li><li>Laguna</li><li>Dana Point</li><li>And the rest of OC</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===================== SERVICES ===================== -->
+<div class="page" id="services" data-page="services">
+
+  <section class="hero">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">Services</p>
+        <h1>Everything between the curb and the last guest home.</h1>
+      </div>
+      <p class="lead">Choose the services your event needs. We put them together into one plan and run it ourselves.</p>
+    </div>
+  </section>
+
+  <section class="rule-top" style="padding-top:0">
+    <div class="wrap">
+      <ul class="service-list full" style="border-top:0">
+        <li>
+          <h3>Full Service Valet</h3>
+          <p>Professional valet attendants for weddings, private parties, corporate events, and venues. Guests pull up, hand off the keys, and walk straight in.</p>
+        </li>
+        <li>
+          <h3>Full Service Shuttle</h3>
+          <p>We shuttle your guests to and from the venue, so limited parking on site never limits your guest list.</p>
+        </li>
+        <li>
+          <h3>Parking Attendants and Security</h3>
+          <p>Parking lot attendants, traffic direction, and lot security. Cars move in and out in order, and the lot stays watched.</p>
+        </li>
+        <li>
+          <h3>Event Security</h3>
+          <p>Event security staff on site, so you and your guests can focus on the event.</p>
+        </li>
+        <li>
+          <h3>Event Setup and Breakdown</h3>
+          <p>We set up chairs, staging, and more before the event, then tear it all down when it ends.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <figure class="photo"><figcaption>Photo: event parking and guest arrival</figcaption></figure>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===================== ABOUT ===================== -->
+<div class="page" id="about" data-page="about">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="stack">
+        <div>
+          <p class="eyebrow">About us</p>
+          <h1>An experienced valet team that runs every event itself.</h1>
+        </div>
+        <p class="lead">The OC Valet is based in South Orange County. When you book us, the people who plan your event are the same people working it.</p>
+        <p class="lead">Our whole team lives here. We know the venues, the streets, and how an Orange County event should run.</p>
+      </div>
+      <figure class="photo tall"><figcaption>Photo: The OC Valet team</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="band-ivory">
+    <div class="wrap stack-lg">
+      <div>
+        <p class="eyebrow">How we work</p>
+        <h2>Local people, a plan for your event, and room to adjust.</h2>
+      </div>
+      <ul class="reasons">
+        <li><h3>We run events ourselves</h3><p>You deal with our team from the first call to the last car.</p></li>
+        <li><h3>South OC based, all local</h3><p>Everyone on the team lives in Orange County.</p></li>
+        <li><h3>Honesty, satisfaction, safety</h3><p>The three values behind every decision we make on site.</p></li>
+        <li><h3>Flexible on the day</h3><p>Events change. We adjust on the spot and keep things moving.</p></li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===================== CONTACT / QUOTE ===================== -->
+<div class="page" id="quote" data-page="quote">
+
+  <section class="hero" style="padding-bottom:32px">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">Contact</p>
+        <h1>Get a free quote.</h1>
+      </div>
+      <p class="lead">Call, email, or tell us about your event below and we will reply with a quote.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:16px">
+    <div class="wrap quote-grid">
+
+      <div>
+        <form id="quote-form" novalidate>
+          <div class="field-pair">
+            <div class="field"><label for="q-name">Name</label><input type="text" id="q-name" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="q-email">Email</label><input type="email" id="q-email" name="email" autocomplete="email"></div>
+          </div>
+          <div class="field-pair">
+            <div class="field"><label for="q-phone">Phone</label><input type="tel" id="q-phone" name="phone" autocomplete="tel"></div>
+            <div class="field"><label for="q-date">Event date</label><input type="date" id="q-date" name="date"></div>
+          </div>
+          <div class="field-pair">
+            <div class="field"><label for="q-venue">Venue or city</label><input type="text" id="q-venue" name="venue" placeholder="Venue name or city"></div>
+            <div class="field"><label for="q-guests">Guest count</label><input type="number" id="q-guests" name="guests" min="1" inputmode="numeric"></div>
+          </div>
+          <fieldset>
+            <legend>Services needed</legend>
+            <div class="checks">
+              <label class="check" for="q-s1"><input type="checkbox" id="q-s1" name="services" value="Full Service Valet"><span>Full Service Valet</span></label>
+              <label class="check" for="q-s2"><input type="checkbox" id="q-s2" name="services" value="Full Service Shuttle"><span>Full Service Shuttle</span></label>
+              <label class="check" for="q-s3"><input type="checkbox" id="q-s3" name="services" value="Parking Attendants and Security"><span>Parking Attendants and Security</span></label>
+              <label class="check" for="q-s4"><input type="checkbox" id="q-s4" name="services" value="Event Security"><span>Event Security</span></label>
+              <label class="check" for="q-s5"><input type="checkbox" id="q-s5" name="services" value="Event Setup and Breakdown"><span>Event Setup and Breakdown</span></label>
+            </div>
+          </fieldset>
+          <div class="field"><label for="q-message">Message</label><textarea id="q-message" name="message" placeholder="Anything else we should know about your event"></textarea></div>
+          <p class="form-error" id="q-error" role="alert"></p>
+          <div><button type="submit" class="btn big" id="q-submit">Request My Free Quote</button></div>
+        </form>
+
+        <div class="result" id="q-result" hidden tabindex="-1">
+          <h2 id="q-result-title">Your request is ready to send.</h2>
+          <p id="q-result-text">Tap the button to open it in your email app, addressed to TheOCValet@gmail.com. You can also copy it, or call us with the details.</p>
+          <pre id="q-summary"></pre>
+          <div class="btn-row">
+            <a class="btn" id="q-mailto" href="mailto:TheOCValet@gmail.com">Open in email app</a>
+            <button type="button" class="btn ghost" id="q-copy">Copy request</button>
+            <button type="button" class="btn ghost" id="q-edit">Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side" aria-label="Contact details">
+        <h2>Prefer to talk?</h2>
+        <dl>
+          <div><dt>Call</dt><dd><a href="tel:+19494908233">(949) 490 8233</a></dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:TheOCValet@gmail.com">TheOCValet@gmail.com</a></dd></div>
+          <div><dt>Service area</dt><dd style="font-size:1rem;color:var(--muted)">All of Orange County, including San Juan Capistrano, Irvine, Newport Beach, Laguna, and Dana Point.</dd></div>
+        </dl>
+      </aside>
+
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<!-- CTA on every page except the quote page -->
+<section class="cta" id="cta-band">
+  <div class="wrap cta-grid">
+    <div class="stack">
+      <h2>Planning an event in Orange County?</h2>
+      <p class="contact-line">
+        <span>Call <a href="tel:+19494908233">(949) 490 8233</a></span>
+        <span>Email <a href="mailto:TheOCValet@gmail.com">TheOCValet@gmail.com</a></span>
+      </p>
+    </div>
+    <a class="btn big" href="#quote">Get a Free Quote</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <a class="logo" href="#home">The <span>OC</span> Valet</a>
+      <p style="margin-top:8px">Event valet, shuttle, parking, and event services. Based in South Orange County.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#quote">Contact</a>
+      <a href="tel:+19494908233">(949) 490 8233</a>
+      <a href="mailto:TheOCValet@gmail.com">TheOCValet@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<div class="action-bar">
+  <a class="btn ghost" href="tel:+19494908233">Call</a>
+  <a class="btn" href="#quote">Get a Free Quote</a>
+</div>
+
+<script>
+(function () {
+  // When the site is hosted for real, paste a form service URL here (Formspree, Basin, etc.)
+  // and quote requests will be delivered straight to the inbox with no email app needed.
+  var FORM_ENDPOINT = "";
+  var EMAIL = "TheOCValet@gmail.com";
+
+  document.documentElement.classList.add("js");
+
+  var pages = ["home", "services", "about", "quote"];
+  function show() {
+    var name = location.hash.replace("#", "");
+    if (pages.indexOf(name) === -1) name = "home";
+    document.querySelectorAll("[data-page]").forEach(function (p) {
+      p.classList.toggle("active", p.getAttribute("data-page") === name);
+    });
+    document.querySelectorAll("[data-nav]").forEach(function (a) {
+      if (a.getAttribute("data-nav") === name) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+    document.getElementById("cta-band").hidden = name === "quote";
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", show);
+  show();
+
+  var form = document.getElementById("quote-form");
+  var error = document.getElementById("q-error");
+  var result = document.getElementById("q-result");
+  var summary = document.getElementById("q-summary");
+  var mailto = document.getElementById("q-mailto");
+  var title = document.getElementById("q-result-title");
+  var text = document.getElementById("q-result-text");
+
+  function val(id) { return document.getElementById(id).value.trim(); }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    error.textContent = "";
+    var name = val("q-name"), email = val("q-email"), phone = val("q-phone");
+    if (!name) { error.textContent = "Please add your name."; document.getElementById("q-name").focus(); return; }
+    if (!email && !phone) { error.textContent = "Please add an email or a phone number so we can send your quote."; document.getElementById("q-email").focus(); return; }
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) { error.textContent = "That email does not look right. Please check it."; document.getElementById("q-email").focus(); return; }
+
+    var services = Array.prototype.map.call(form.querySelectorAll('input[name="services"]:checked'), function (c) { return c.value; });
+    var lines = [
+      "Quote request for The OC Valet",
+      "",
+      "Name: " + name,
+      "Email: " + (email || "Not given"),
+      "Phone: " + (phone || "Not given"),
+      "Event date: " + (val("q-date") || "Not given"),
+      "Venue or city: " + (val("q-venue") || "Not given"),
+      "Guest count: " + (val("q-guests") || "Not given"),
+      "Services needed: " + (services.length ? services.join(", ") : "Not sure yet"),
+      "",
+      "Message:",
+      val("q-message") || "None"
+    ];
+    var body = lines.join("\n");
+    summary.textContent = body;
+    mailto.href = "mailto:" + EMAIL + "?subject=" + encodeURIComponent("Quote request from " + name) + "&body=" + encodeURIComponent(body);
+
+    function reveal(sent) {
+      if (sent) {
+        title.textContent = "Thank you. Your request was sent.";
+        text.textContent = "We will reply with your quote. For anything urgent, call (949) 490 8233.";
+        mailto.hidden = true;
+      } else {
+        title.textContent = "Your request is ready to send.";
+        text.textContent = "Tap the button to open it in your email app, addressed to " + EMAIL + ". You can also copy it, or call us with the details.";
+        mailto.hidden = false;
+      }
+      form.hidden = true;
+      result.hidden = false;
+      result.focus();
+      result.scrollIntoView({ block: "start" });
+    }
+
+    if (FORM_ENDPOINT) {
+      fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: new FormData(form) })
+        .then(function (r) { reveal(r.ok); })
+        .catch(function () { reveal(false); });
+    } else {
+      reveal(false);
+    }
+  });
+
+  document.getElementById("q-copy").addEventListener("click", function () {
+    var btn = this;
+    try {
+      navigator.clipboard.writeText(summary.textContent).then(function () {
+        btn.textContent = "Copied";
+        setTimeout(function () { btn.textContent = "Copy request"; }, 2000);
+      }).catch(function () { btn.textContent = "Select the text to copy"; });
+    } catch (err) { btn.textContent = "Select the text to copy"; }
+  });
+
+  document.getElementById("q-edit").addEventListener("click", function () {
+    result.hidden = true;
+    form.hidden = false;
+  });
+})();
+</script>
+</body>
+</html>
