@@ -123,6 +123,7 @@ section { padding: 56px 0; }
 }
 figure { margin: 0; }
 .photo.tall { min-height: 320px; }
+.hero-img { display: block; width: 100%; height: auto; border: 1px solid var(--navy-700); }
 .photo.has-img { background: var(--navy-800); }
 .photo.has-img img { display: block; width: 100%; height: 100%; min-height: 320px; object-fit: cover; object-position: 60% center; }
 
@@ -198,6 +199,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); }
 .action-bar .btn.ghost { color: var(--ivory); }
 
 @media (min-width: 800px) {
+  .hero-img { height: 460px; object-fit: cover; object-position: 51% center; }
   body { padding-bottom: 0; font-size: 18px; }
   .action-bar { display: none; }
   .wrap { padding: 0 32px; }
@@ -275,7 +277,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--gold); }
           <span>Email <a href="mailto:TheOCValet@gmail.com">TheOCValet@gmail.com</a></span>
         </p>
       </div>
-      <figure class="photo tall has-img"><img src="hero-4k.jpg" alt="The OC Valet attendant standing beside a valet parking sign" width="3840" height="2152" fetchpriority="high"></figure>
+      <img class="hero-img" src="hero-4k.jpg" width="1440" height="807" alt="Valet attendant standing beside a sign that reads The OC Valet">
     </div>
   </section>
 
